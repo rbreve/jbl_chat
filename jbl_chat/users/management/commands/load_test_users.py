@@ -65,7 +65,7 @@ class Command(BaseCommand):
             profile, created = UserProfile.objects.get_or_create(
                 user=user,
                 defaults={
-                    "image_url": f"https://api.dicebear.com/9.x/avataaars/svg?seed={user_data['username']}" # noqa: E261 E501
+                    "image_url": f"https://api.dicebear.com/9.x/avataaars-neutral/svg?seed={user_data['username']}"  # noqa: E261 E501
                 },
             )
 

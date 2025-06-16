@@ -9,7 +9,7 @@ class UserProfile(models.Model):
         User, on_delete=models.CASCADE
     )  # Delete profile when user is deleted
     image_url = models.CharField(
-        max_length=200, default="https://api.dicebear.com/9.x/avataaars/svg"
+        max_length=200, default="https://api.dicebear.com/9.x/avataaars-neutral/svg"
     )
 
     def __str__(self):

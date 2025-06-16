@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-lg">
+    <h1 class="text-2xl font-bold mb-4">Users</h1>
+    
+    <!-- User list will be rendered here by HTMX/JS -->
+    <div id="users-container"
+         class="bg-white rounded-lg shadow"
+         hx-get="/api/users/profiles/"
+         hx-trigger="load"
+         hx-swap="none"
+         hx-on::after-request="handleResponse(event)">
+        
+        <!-- Initial loading state -->
+        <div class="p-4 text-center text-gray-500">
+            <p>Loading users...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+function handleResponse(event) {
+    const container = document.getElementById('users-container');
+    
+    if (event.detail.successful) {
+        const users = JSON.parse(event.detail.xhr.response);
+        let usersHtml = '';
+
+        if (users.length === 0) {
+            usersHtml = '<div class="p-4 text-center text-gray-500"><p>No other users found.</p></div>';
+        } else {
+            users.forEach(profile => {
+                usersHtml += `
+                    <div class="flex items-center p-3 hover:bg-gray-100 rounded-lg cursor-pointer border-b border-gray-200">
+                        <img src="${profile.image_url}?seed=${profile.user.username}" alt="${profile.user.username}" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <div class="font-bold">${profile.user.username}</div>
+                            <div class="text-sm text-gray-500">Available to chat</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        container.innerHTML = usersHtml;
+
+    } else { // Request failed (e.g., 401 Unauthorized)
+        container.innerHTML = `
+            <div class="p-4 text-center">
+                <p class="text-red-600 mb-4">Please log in to view users.</p>
+                <a href="{% url 'login' %}" 
+                   class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Login
+                </a>
+            </div>
+        `;
+    }
+}
+</script>
+{% endblock %} 
