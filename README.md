@@ -27,3 +27,7 @@ Please submit your solution as a pull request to our public repository. Happy co
 # run to load test users
 
 `python manage.py load_test_users`
+
+# Test
+
+`pytest jbl_chat/chat/test_api_message_privacy.py`
