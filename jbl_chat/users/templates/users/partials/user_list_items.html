@@ -1,0 +1,14 @@
+{% for profile in users %}
+<div hx-get="{% url 'chat-room' profile.user.id %}"
+     hx-target="#chat-window-container"
+     hx-swap="innerHTML"
+     class="flex items-center p-3 hover:bg-gray-100 rounded-lg cursor-pointer border-b border-gray-200 mx-2">
+    <img src="{{ profile.image_url }}?seed={{ profile.user.username }}" alt="{{ profile.user.username }}" class="w-12 h-12 rounded-full mr-4">
+    <div>
+        <div class="font-bold">{{ profile.user.username }}</div>
+        <div class="text-sm text-gray-500">Available to chat</div>
+    </div>
+</div>
+{% empty %}
+<div class="p-4 text-center text-gray-500"><p>No other users found.</p></div>
+{% endfor %} 

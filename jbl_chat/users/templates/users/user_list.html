@@ -1,60 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8 max-w-lg">
-    <h1 class="text-2xl font-bold mb-4">Users</h1>
-    
-    <!-- User list will be rendered here by HTMX/JS -->
-    <div id="users-container"
-         class="bg-white rounded-lg shadow"
-         hx-get="/api/users/profiles/"
-         hx-trigger="load"
-         hx-swap="none"
-         hx-on::after-request="handleResponse(event)">
+<div class="flex h-[calc(100vh-64px)]"> <!-- 100vh minus nav height, assumes 64px nav -->
+
+    <!-- Left Panel: User List -->
+    <div class="w-1/3 border-r border-gray-200 bg-white overflow-y-auto">
+        <div class="p-4 border-b">
+            <h1 class="text-xl font-bold">Chats</h1>
+        </div>
         
-        <!-- Initial loading state -->
-        <div class="p-4 text-center text-gray-500">
-            <p>Loading users...</p>
+        <!-- This div will be populated by HTMX -->
+        <div id="users-container"
+             hx-get="{% url 'api-user-profiles' %}"
+             hx-trigger="load">
+            
+            <!-- Initial loading state -->
+            <div class="p-4 text-center text-gray-500">
+                <p>Loading users...</p>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-function handleResponse(event) {
-    const container = document.getElementById('users-container');
-    
-    if (event.detail.successful) {
-        const users = JSON.parse(event.detail.xhr.response);
-        let usersHtml = '';
-
-        if (users.length === 0) {
-            usersHtml = '<div class="p-4 text-center text-gray-500"><p>No other users found.</p></div>';
-        } else {
-            users.forEach(profile => {
-                usersHtml += `
-                    <div class="flex items-center p-3 hover:bg-gray-100 rounded-lg cursor-pointer border-b border-gray-200">
-                        <img src="${profile.image_url}?seed=${profile.user.username}" alt="${profile.user.username}" class="w-12 h-12 rounded-full mr-4">
-                        <div>
-                            <div class="font-bold">${profile.user.username}</div>
-                            <div class="text-sm text-gray-500">Available to chat</div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-        container.innerHTML = usersHtml;
-
-    } else { // Request failed (e.g., 401 Unauthorized)
-        container.innerHTML = `
-            <div class="p-4 text-center">
-                <p class="text-red-600 mb-4">Please log in to view users.</p>
-                <a href="{% url 'login' %}" 
-                   class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                    Login
-                </a>
+    <!-- Right Panel: Chat Window -->
+    <div class="w-2/3 flex flex-col bg-gray-50">
+        <!-- This container is now the stable target for our HTMX swaps -->
+        <div id="chat-window-container" class="flex-grow">
+            <div id="chat-window" class="h-full flex items-center justify-center">
+                <!-- This will be replaced when a chat is selected -->
+                <div class="text-center text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                    <h2 class="mt-2 text-lg font-medium">Select a chat</h2>
+                    <p class="text-sm">Choose from your existing conversations to start chatting.</p>
+                </div>
             </div>
-        `;
-    }
-}
-</script>
+        </div>
+    </div>
+
+</div>
 {% endblock %} 

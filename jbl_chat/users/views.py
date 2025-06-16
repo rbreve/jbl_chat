@@ -8,6 +8,8 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
+from django.template.loader import render_to_string
+from django.http import HttpResponse
 
 from .models import UserProfile
 from .serializers import (
@@ -30,6 +32,18 @@ class UserProfileListView(generics.ListAPIView):
 
     def get_queryset(self):
         return UserProfile.objects.exclude(user=self.request.user.pk)
+
+    def list(self, request, *args, **kwargs):
+        # Check if the request is from HTMX
+        if request.headers.get("Hx-Request"):
+            queryset = self.get_queryset()
+            html = render_to_string(
+                "users/partials/user_list_items.html", {"users": queryset}
+            )
+            return HttpResponse(html)
+
+        # Fallback to default JSON response
+        return super().list(request, *args, **kwargs)
 
 
 class UserProfileDetailView(generics.RetrieveAPIView):
