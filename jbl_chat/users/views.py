@@ -51,6 +51,7 @@ class UserProfileDetailView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
 
+
 class LogoutView(TemplateView):
     permission_classes = (IsAuthenticated,)
 

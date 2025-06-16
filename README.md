@@ -15,3 +15,15 @@ We have provided a Django skeleton project along with Docker setup for your conv
 Incorporating HTMX will allow you to create dynamic, interactive elements on the front end without needing to reload the page. We encourage you to think about how HTMX can enhance user interactions effectively.
 
 Please submit your solution as a pull request to our public repository. Happy coding!
+
+# To run:
+
+`docker compose up`
+
+# Installation
+
+`python manage.py migrate`
+
+# run to load test users
+
+`python manage.py load_test_users`
