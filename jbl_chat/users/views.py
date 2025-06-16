@@ -3,7 +3,7 @@ from rest_framework import generics
 from django.shortcuts import redirect
 from rest_framework import permissions, status
 from rest_framework.response import Response
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -50,6 +50,13 @@ class UserProfileDetailView(generics.RetrieveAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
+
+class LogoutView(TemplateView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect("login")
 
 
 class LoginView(TemplateView):
