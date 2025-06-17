@@ -3,8 +3,16 @@ version: '3.7'
 services:
   web:
     build: .
-    command: python jbl_chat/manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "python jbl_chat/manage.py migrate &&
+             python jbl_chat/manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
       - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
